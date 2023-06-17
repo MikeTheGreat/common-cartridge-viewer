@@ -16,6 +16,8 @@ View Common Cartridges in the browser. Methods:
 git clone https://github.com/instructure/common-cartridge-viewer.git
 cd common-cartridge-viewer
 yarn
+set NODE_OPTIONS=--openssl-legacy-provider
+yarn add babel-polyfill
 yarn run build # populates locale data
 yarn start
 ```
