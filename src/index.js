@@ -30,15 +30,15 @@ AVAILABLE_LOCALES[locale]().then(messages => {
   i18n.load(catalogs);
 });
 
-const highContrastEnabled =
-  typeof parsedQueryString["high-contrast"] !== "undefined";
+// const highContrastEnabled =
+//   typeof parsedQueryString["high-contrast"] !== "undefined";
 
-if (highContrastEnabled) {
-  highContrastTheme.use();
-  import("./high-contrast.css");
-} else {
-  theme.use();
-}
+// if (highContrastEnabled) {
+//   highContrastTheme.use();
+//   import("./high-contrast.css");
+// } else {
+theme.use();
+// }
 
 Sentry.init({
   dsn: process.env.REACT_APP_SENTRY_DSN,
