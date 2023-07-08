@@ -41,3 +41,11 @@ yarn start
   src="https://common-cartridge-viewer.netlify.com/?cartridge=https://s3.amazonaws.com/public-imscc/facc0607309246638c298c6a1b01abcf.imscc"
 ></iframe>
 ```
+
+# NOTES
+
+You must use the older OpenSSL package in order for this to work:
+
+```
+export NODE_OPTIONS=--openssl-legacy-provider
+```
