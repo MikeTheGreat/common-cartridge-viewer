@@ -122,6 +122,25 @@ export default class App extends Component {
                           />
                         }
                       />
+                      <FileDrop
+                        accept={[".imscc", ".zip"]}
+                        onDropAccepted={files => {
+                          this.setState({ file_rhs: files[0] });
+                          console.log("Added file_rhs: files[0]:" + files[0]);
+                        }}
+                        onDropRejected={file => {
+                          console.error("file rejected");
+                        }}
+                        label={
+                          <Billboard
+                            heading={i18n._(t`Common Cartridge Viewer`)}
+                            message={i18n._(
+                              t`Drag and drop the cartridge, or click to browse your computer.`
+                            )}
+                            hero={<IconZipped />}
+                          />
+                        }
+                      />
                     </View>
                     <form onSubmit={this.handleSubmit}>
                       <Flex justifyItems="center" margin="medium none large">
@@ -167,6 +186,7 @@ export default class App extends Component {
                     manifest={this.props.manifest}
                     cartridge={this.state.cartridge || this.state.file}
                     file={this.state.file}
+                    file_rhs={this.state.file_rhs}
                     compact={this.props.compact}
                     onHistoryChange={this.handleHistoryChange}
                     onPreviewFailure={this.handlePreviewFailure}

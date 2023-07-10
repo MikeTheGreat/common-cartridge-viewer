@@ -39,6 +39,7 @@ import IconClose from "@instructure/ui-icons/lib/Solid/IconX";
 import Button from "@instructure/ui-buttons/lib/components/Button";
 
 const queryString = require("query-string");
+const diff = require("deep-diff").diff;
 
 const ONE_MEG_IN_BYTES = 1000000;
 
@@ -108,6 +109,7 @@ export default class CommonCartridge extends Component {
   componentDidMount() {
     document.addEventListener("keydown", this.handleDocumentKeydown);
     this.getEntriesFromPreviewType();
+    console.log(this.state);
   }
 
   getEntriesFromManifest = () => {
@@ -137,6 +139,7 @@ export default class CommonCartridge extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (this.state.previewType !== prevState.previewType) {
       this.getEntriesFromPreviewType();
+      console.log(this.state);
       return;
     }
     if (
@@ -191,7 +194,8 @@ export default class CommonCartridge extends Component {
 
   async getEntriesFromDroppedFile() {
     const entries = await getEntriesFromBlob(this.props.file);
-    this.setState({ entries }, () => this.loadEntries());
+    const entries_rhs = await getEntriesFromBlob(this.props.file_rhs);
+    this.setState({ entries, entries_rhs }, () => this.loadEntries());
   }
 
   async loadEntries() {
@@ -213,7 +217,31 @@ export default class CommonCartridge extends Component {
         this.setState({ errorLoading: true });
       }
       if (xml != null) {
-        this.loadResources(xml);
+        await this.loadResources(xml);
+        console.log(this.state);
+
+        const entries_rhs = this.state.entries_rhs;
+        const entryMap_rhs = new Map();
+        for (let entry of entries_rhs) {
+          entryMap_rhs.set(entry.filename, entry);
+        }
+        this.setState({ entryMap_rhs });
+        const manifestEntry_rhs = entries_rhs.find(
+          entry => entry.filename === "imsmanifest.xml"
+        );
+
+        if (manifestEntry_rhs != null) {
+          let xml_rhs;
+          try {
+            xml_rhs = await getTextFromEntry(manifestEntry_rhs);
+          } catch (error) {
+            this.setState({ errorLoading: true });
+          }
+          if (xml_rhs != null) {
+            await this.loadResources(xml_rhs);
+            console.log(this.state);
+          }
+        }
       }
     }
   }
@@ -449,6 +477,9 @@ export default class CommonCartridge extends Component {
     const singleResourceView =
       this.state.showcaseSingleResource ||
       this.state.showcaseResources.length === 1;
+
+    console.log("Cartridge: render: file: " + this.props.file);
+    console.log("Cartridge: render: file_rhs: " + this.props.file_rhs);
 
     return (
       <I18n>
